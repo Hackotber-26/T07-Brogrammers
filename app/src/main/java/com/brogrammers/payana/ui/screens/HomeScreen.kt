@@ -72,6 +72,18 @@ fun HomeScreen(
     ) {
         BrandHeader()
         Spacer(Modifier.height(20.dp))
+        Text(
+            "Good morning, commuter",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
+        )
+        Text(
+            "Find someone heading your way and share the last mile.",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(Modifier.height(14.dp))
         DemoMapCard()
         Spacer(Modifier.height(18.dp))
 

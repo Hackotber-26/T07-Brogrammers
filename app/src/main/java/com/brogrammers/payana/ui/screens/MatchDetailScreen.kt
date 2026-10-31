@@ -57,6 +57,12 @@ fun MatchDetailScreen(
 
         DemoMapCard(showRoute = true)
 
+        Text(
+            "Your ride summary",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+        )
+
         Card(
             shape = RoundedCornerShape(18.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),

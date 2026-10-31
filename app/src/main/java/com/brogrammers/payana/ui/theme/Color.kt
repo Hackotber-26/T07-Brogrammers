@@ -19,6 +19,8 @@ val TextSecondary = Color(0xFF5A6B67)
 val OutlineMuted = Color(0xFFC5CDC9)
 val MapSurface = Color(0xFFE9F1EF)
 val MapRoad = Color(0xFFB9D7D0)
+val MapPark = Color(0xFFD7EBD8)
+val MapWater = Color(0xFFCDE8EE)
 
 val ErrorRed = Color(0xFFB3261E)
 val SuccessGreen = Color(0xFF1B7A4E)
