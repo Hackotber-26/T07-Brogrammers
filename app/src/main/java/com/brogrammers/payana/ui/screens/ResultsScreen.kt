@@ -27,6 +27,7 @@ import com.brogrammers.payana.data.RideRequest
 import com.brogrammers.payana.data.SampleData
 import com.brogrammers.payana.matching.FareCalculator
 import com.brogrammers.payana.matching.MatchingEngine
+import com.brogrammers.payana.ui.maskedCommuterLabel
 
 @Composable
 fun ResultsScreen(
@@ -86,7 +87,7 @@ private fun MatchCard(match: RideMatch, onSelect: () -> Unit) {
         modifier = Modifier.fillMaxWidth(),
     ) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(c.displayName, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
+            Text(maskedCommuterLabel(c.id), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
             Text(
                 "${SampleData.stationName(c.startStationId)} → ${SampleData.destinationName(c.destinationId)}",
                 style = MaterialTheme.typography.bodyMedium,

@@ -26,6 +26,7 @@ import com.brogrammers.payana.data.SampleData
 import com.brogrammers.payana.matching.FareCalculator
 import com.brogrammers.payana.matching.MatchingEngine
 import com.brogrammers.payana.ui.theme.SuccessGreen
+import com.brogrammers.payana.ui.maskedCommuterLabel
 
 @Composable
 fun MatchDetailScreen(
@@ -70,7 +71,7 @@ fun MatchDetailScreen(
             modifier = Modifier.fillMaxWidth(),
         ) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(c.displayName, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
+                Text(maskedCommuterLabel(c.id), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
                 Text("Route compatibility", style = MaterialTheme.typography.titleMedium)
                 Text(
                     "You: ${SampleData.stationName(request.startStationId)} → ${SampleData.destinationName(request.destinationId)} at ${MatchingEngine.formatTime(request.departureMinutes)}",

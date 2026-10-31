@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Modifier
 import com.brogrammers.payana.ai.MatchExplainer
 import com.brogrammers.payana.data.MatchPreferences
@@ -24,6 +25,7 @@ import com.brogrammers.payana.ui.screens.HomeScreen
 import com.brogrammers.payana.ui.screens.LoadingScreen
 import com.brogrammers.payana.ui.screens.MatchDetailScreen
 import com.brogrammers.payana.ui.screens.NoMatchScreen
+import com.brogrammers.payana.ui.screens.OnboardingScreen
 import com.brogrammers.payana.ui.screens.ResultsScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -31,6 +33,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun PayanaApp(explainer: MatchExplainer) {
     var screen by remember { mutableStateOf<ScreenState>(ScreenState.Home) }
+    val context = LocalContext.current
+    val preferences = remember { context.getSharedPreferences("payana_demo", android.content.Context.MODE_PRIVATE) }
+    var onboardingComplete by remember { mutableStateOf(preferences.getBoolean("onboarding_complete", false)) }
     val scope = rememberCoroutineScope()
 
     fun runSearch(request: RideRequest) {
@@ -81,51 +86,53 @@ fun PayanaApp(explainer: MatchExplainer) {
                 .padding(padding)
                 .background(MaterialTheme.colorScheme.background),
         ) {
-            when (val s = screen) {
-                is ScreenState.Home -> HomeScreen(onFindRide = ::runSearch)
-                is ScreenState.Loading -> LoadingScreen(s.message)
-                is ScreenState.Results -> ResultsScreen(
-                    request = s.request,
-                    matches = s.matches,
-                    onBack = { screen = ScreenState.Home },
-                    onSelect = { match -> openDetails(s.request, match) },
-                )
-                is ScreenState.NoMatch -> NoMatchScreen(
-                    request = s.request,
-                    onRetry = { runSearch(s.request) },
-                    onRelaxDetour = {
-                        val relaxed = s.request.copy(
-                            preferences = MatchPreferences(
-                                maxDetourMinutes = 30,
-                                womenOnly = s.request.preferences.womenOnly,
-                                departureWindowMinutes = s.request.preferences.departureWindowMinutes,
-                            ),
-                        )
-                        runSearch(relaxed)
+            if (!onboardingComplete) {
+                OnboardingScreen(
+                    onFinished = {
+                        preferences.edit().putBoolean("onboarding_complete", true).apply()
+                        onboardingComplete = true
                     },
-                    onHome = { screen = ScreenState.Home },
                 )
-                is ScreenState.Details -> MatchDetailScreen(
-                    request = s.request,
-                    match = s.match,
-                    aiExplanation = s.aiExplanation,
-                    explanationFromAi = s.explanationFromAi,
-                    requestConfirmed = s.requestConfirmed,
-                    onConfirmRequest = { screen = s.copy(requestConfirmed = true) },
-                    onBack = {
-                        val matches = MatchingEngine.findMatches(s.request)
-                        screen = if (matches.isEmpty()) {
-                            ScreenState.NoMatch(s.request)
-                        } else {
-                            ScreenState.Results(s.request, matches)
-                        }
-                    },
-                    onHome = { screen = ScreenState.Home },
-                )
-                is ScreenState.Error -> ErrorScreen(
-                    message = s.message,
-                    onDismiss = { screen = s.returnTo },
-                )
+            } else {
+                when (val s = screen) {
+                    is ScreenState.Home -> HomeScreen(onFindRide = ::runSearch)
+                    is ScreenState.Loading -> LoadingScreen(s.message)
+                    is ScreenState.Results -> ResultsScreen(
+                        request = s.request,
+                        matches = s.matches,
+                        onBack = { screen = ScreenState.Home },
+                        onSelect = { match -> openDetails(s.request, match) },
+                    )
+                    is ScreenState.NoMatch -> NoMatchScreen(
+                        request = s.request,
+                        onRetry = { runSearch(s.request) },
+                        onRelaxDetour = {
+                            val relaxed = s.request.copy(
+                                preferences = MatchPreferences(
+                                    maxDetourMinutes = 30,
+                                    womenOnly = s.request.preferences.womenOnly,
+                                    departureWindowMinutes = s.request.preferences.departureWindowMinutes,
+                                ),
+                            )
+                            runSearch(relaxed)
+                        },
+                        onHome = { screen = ScreenState.Home },
+                    )
+                    is ScreenState.Details -> MatchDetailScreen(
+                        request = s.request,
+                        match = s.match,
+                        aiExplanation = s.aiExplanation,
+                        explanationFromAi = s.explanationFromAi,
+                        requestConfirmed = s.requestConfirmed,
+                        onConfirmRequest = { screen = s.copy(requestConfirmed = true) },
+                        onBack = {
+                            val matches = MatchingEngine.findMatches(s.request)
+                            screen = if (matches.isEmpty()) ScreenState.NoMatch(s.request) else ScreenState.Results(s.request, matches)
+                        },
+                        onHome = { screen = ScreenState.Home },
+                    )
+                    is ScreenState.Error -> ErrorScreen(message = s.message, onDismiss = { screen = s.returnTo })
+                }
             }
         }
     }

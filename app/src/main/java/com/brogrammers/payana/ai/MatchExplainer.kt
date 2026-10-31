@@ -115,7 +115,7 @@ class MatchExplainer(
         return """
             Explain why this validated match is suitable (facts only):
             - Requester leaves at ${MatchingEngine.formatTime(request.departureMinutes)} from station ${request.startStationId}, going to ${request.destinationId}, ${request.passengerCount} passenger(s), max detour ${request.preferences.maxDetourMinutes} min, womenOnly=${request.preferences.womenOnly}.
-            - Candidate ${c.displayName} leaves at ${MatchingEngine.formatTime(c.departureMinutes)} from ${c.startStationId} to ${c.destinationId}, groupSize=${c.groupSize}, seatsAvailable=${c.seatsAvailable}, womenOnlyGroup=${c.womenOnlyGroup}.
+            - Candidate ${c.id} leaves at ${MatchingEngine.formatTime(c.departureMinutes)} from ${c.startStationId} to ${c.destinationId}, groupSize=${c.groupSize}, seatsAvailable=${c.seatsAvailable}, womenOnlyGroup=${c.womenOnlyGroup}.
             - Estimated detour: ${match.estimatedDetourMinutes} min (demo heuristic).
             - Departure delta: ${match.departureDeltaMinutes} min.
             - Illustrative fare share: ${match.fareSplit.perPersonPaise} paise of ${match.fareSplit.totalFarePaise} paise across ${match.fareSplit.passengerCount} people.
