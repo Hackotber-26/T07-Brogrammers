@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,6 +33,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import com.brogrammers.payana.ui.theme.MapPark
 import com.brogrammers.payana.ui.theme.MapRoad
@@ -41,9 +43,12 @@ import com.brogrammers.payana.ui.theme.TealPrimary
 
 /** A short, animated fictional map. It has no GPS, tiles, or navigation data. */
 @Composable
-fun DemoMapCard(
+fun FallbackDemoMapCard(
     modifier: Modifier = Modifier,
     showRoute: Boolean = true,
+    height: Dp? = 238.dp,
+    startStationId: String = "majestic",
+    destinationId: String = "koramangala",
 ) {
     val transition = rememberInfiniteTransition(label = "demo-map-motion")
     val pulse by transition.animateFloat(
@@ -59,10 +64,10 @@ fun DemoMapCard(
         label = "rider-drift",
     )
 
-    Box(
+    BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth()
-            .height(238.dp)
+            .then(if (height == null) Modifier.fillMaxSize() else Modifier.height(height))
             .clip(RoundedCornerShape(26.dp))
             .background(MapSurface),
     ) {
@@ -83,11 +88,12 @@ fun DemoMapCard(
             }
 
             if (showRoute) {
+                val start = fallbackMapPoint(startStationId, false)
+                val destination = fallbackMapPoint(destinationId, true)
                 val route = Path().apply {
-                    moveTo(w * .18f, h * .79f)
-                    lineTo(w * .34f, h * .62f)
-                    lineTo(w * .54f, h * .43f)
-                    lineTo(w * .82f, h * .22f)
+                    moveTo(w * start.x, h * start.y)
+                    lineTo(w * ((start.x + destination.x) / 2f), h * ((start.y + destination.y) / 2f - .12f))
+                    lineTo(w * destination.x, h * destination.y)
                 }
                 drawPath(route, TealPrimary, style = Stroke(width = 9f))
                 drawCircle(Color.White, radius = 13f, center = Offset(w * .54f, h * .43f))
@@ -109,10 +115,11 @@ fun DemoMapCard(
             )
         }
 
-        MapMarker("You", Modifier.align(Alignment.BottomStart).padding(12.dp), TealPrimary, pulse)
-        MapMarker("Metro pickup", Modifier.align(Alignment.TopEnd).padding(12.dp), Color(0xFF0E8F74), 1f)
-        MapMarker("Shared rider", Modifier.align(Alignment.Center).offset(x = riderDrift.dp, y = 4.dp), Color(0xFFE07A3F), pulse)
-        MapMarker("Koramangala", Modifier.align(Alignment.BottomEnd).padding(12.dp), Color(0xFFB33A4A), 1f)
+        val start = fallbackMapPoint(startStationId, false)
+        val destination = fallbackMapPoint(destinationId, true)
+        MapMarker(startStationId.replace('_', ' '), Modifier.align(Alignment.TopStart).offset(x = maxWidth * start.x, y = maxHeight * start.y), TealPrimary, pulse)
+        MapMarker("Shared rider", Modifier.align(Alignment.TopStart).offset(x = maxWidth * ((start.x + destination.x) / 2f) + riderDrift.dp, y = maxHeight * ((start.y + destination.y) / 2f)), Color(0xFFE07A3F), pulse)
+        MapMarker(destinationId.replace('_', ' '), Modifier.align(Alignment.TopStart).offset(x = maxWidth * destination.x, y = maxHeight * destination.y), Color(0xFFB33A4A), 1f)
     }
 }
 

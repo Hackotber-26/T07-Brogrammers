@@ -98,9 +98,23 @@ private fun MatchCard(match: RideMatch, onSelect: () -> Unit) {
             }
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 MetaChip("~${match.estimatedDetourMinutes} min detour")
-                MetaChip(
-                    "${FareCalculator.formatRupees(match.fareSplit.perPersonPaise)} / person*",
-                )
+            }
+            Card(
+                shape = RoundedCornerShape(14.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Row(Modifier.fillMaxWidth().padding(12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Column {
+                        Text("YOUR SHARE", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                        Text(FareCalculator.formatRupees(match.fareSplit.perPersonPaise), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                        Text("${match.fareSplit.passengerCount} people splitting", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    }
+                    Column(horizontalAlignment = androidx.compose.ui.Alignment.End) {
+                        Text("DEMO TOTAL", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                        Text(FareCalculator.formatRupees(match.fareSplit.totalFarePaise), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    }
+                }
             }
             if (c.womenOnlyGroup) {
                 Text(

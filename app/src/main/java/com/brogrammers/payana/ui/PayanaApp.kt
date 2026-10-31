@@ -26,7 +26,10 @@ import com.brogrammers.payana.ui.screens.LoadingScreen
 import com.brogrammers.payana.ui.screens.MatchDetailScreen
 import com.brogrammers.payana.ui.screens.NoMatchScreen
 import com.brogrammers.payana.ui.screens.OnboardingScreen
+import com.brogrammers.payana.ui.screens.ProfileSetupScreen
 import com.brogrammers.payana.ui.screens.ResultsScreen
+import com.brogrammers.payana.ui.screens.AcceptedRideScreen
+import com.brogrammers.payana.ui.screens.TrackingScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -36,6 +39,7 @@ fun PayanaApp(explainer: MatchExplainer) {
     val context = LocalContext.current
     val preferences = remember { context.getSharedPreferences("payana_demo", android.content.Context.MODE_PRIVATE) }
     var onboardingComplete by remember { mutableStateOf(preferences.getBoolean("onboarding_complete", false)) }
+    var profileComplete by remember { mutableStateOf(preferences.getBoolean("profile_complete", false)) }
     val scope = rememberCoroutineScope()
 
     fun runSearch(request: RideRequest) {
@@ -93,6 +97,18 @@ fun PayanaApp(explainer: MatchExplainer) {
                         onboardingComplete = true
                     },
                 )
+            } else if (!profileComplete) {
+                ProfileSetupScreen(
+                    onComplete = { name, gender, shareName ->
+                        preferences.edit()
+                            .putString("profile_name", name)
+                            .putString("profile_gender", gender)
+                            .putBoolean("share_name", shareName)
+                            .putBoolean("profile_complete", true)
+                            .apply()
+                        profileComplete = true
+                    },
+                )
             } else {
                 when (val s = screen) {
                     is ScreenState.Home -> HomeScreen(onFindRide = ::runSearch)
@@ -124,12 +140,23 @@ fun PayanaApp(explainer: MatchExplainer) {
                         aiExplanation = s.aiExplanation,
                         explanationFromAi = s.explanationFromAi,
                         requestConfirmed = s.requestConfirmed,
-                        onConfirmRequest = { screen = s.copy(requestConfirmed = true) },
+                        onConfirmRequest = { screen = ScreenState.Accepted(s.request, s.match) },
                         onBack = {
                             val matches = MatchingEngine.findMatches(s.request)
                             screen = if (matches.isEmpty()) ScreenState.NoMatch(s.request) else ScreenState.Results(s.request, matches)
                         },
                         onHome = { screen = ScreenState.Home },
+                    )
+                    is ScreenState.Accepted -> AcceptedRideScreen(
+                        request = s.request,
+                        match = s.match,
+                        onTrack = { screen = ScreenState.Tracking(s.request, s.match) },
+                        onHome = { screen = ScreenState.Home },
+                    )
+                    is ScreenState.Tracking -> TrackingScreen(
+                        request = s.request,
+                        match = s.match,
+                        onFinish = { screen = ScreenState.Home },
                     )
                     is ScreenState.Error -> ErrorScreen(message = s.message, onDismiss = { screen = s.returnTo })
                 }

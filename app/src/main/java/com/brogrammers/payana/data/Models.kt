@@ -88,5 +88,13 @@ sealed class ScreenState {
         val explanationFromAi: Boolean,
         val requestConfirmed: Boolean = false,
     ) : ScreenState()
+    data class Accepted(
+        val request: RideRequest,
+        val match: RideMatch,
+    ) : ScreenState()
+    data class Tracking(
+        val request: RideRequest,
+        val match: RideMatch,
+    ) : ScreenState()
     data class Error(val message: String, val returnTo: ScreenState = Home) : ScreenState()
 }

@@ -2,6 +2,7 @@ package com.brogrammers.payana.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -93,16 +94,22 @@ fun MatchDetailScreen(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text("Illustrative fare split", style = MaterialTheme.typography.titleMedium)
-                Text("Assumed total ride cost: ${FareCalculator.formatRupees(fare.totalFarePaise)}")
-                Text("Passengers after you join: ${fare.passengerCount}")
+            Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("Your fare summary", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Column {
+                        Text("YOUR SHARE", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                        Text(FareCalculator.formatRupees(fare.perPersonPaise), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                        Text("per person", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    }
+                    Column(horizontalAlignment = androidx.compose.ui.Alignment.End) {
+                        Text("TOTAL RIDE", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                        Text(FareCalculator.formatRupees(fare.totalFarePaise), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                        Text("${fare.passengerCount} passengers", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    }
+                }
                 Text(
-                    "Estimated contribution per person: ${FareCalculator.formatRupees(fare.perPersonPaise)}",
-                    fontWeight = FontWeight.SemiBold,
-                )
-                Text(
-                    "*Not a live auto-rickshaw quote — fictional demo math in paise.",
+                    "Illustrative split • fictional demo math, not a live auto-rickshaw quote.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
