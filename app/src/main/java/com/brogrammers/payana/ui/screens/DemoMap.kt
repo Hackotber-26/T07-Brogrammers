@@ -80,17 +80,17 @@ fun DemoMapCard(
             )
         }
 
-        MapMarker("You", Alignment.BottomStart, TealPrimary)
-        MapMarker("Pickup", Alignment.TopEnd, Color(0xFF0E8F74))
-        MapMarker("Shared rider", Alignment.Center, Color(0xFFE07A3F))
-        MapMarker("Destination", Alignment.BottomEnd, Color(0xFFB33A4A))
+        MapMarker("You", Modifier.align(Alignment.BottomStart).padding(12.dp), TealPrimary)
+        MapMarker("Pickup", Modifier.align(Alignment.TopEnd).padding(12.dp), Color(0xFF0E8F74))
+        MapMarker("Shared rider", Modifier.align(Alignment.Center).padding(12.dp), Color(0xFFE07A3F))
+        MapMarker("Destination", Modifier.align(Alignment.BottomEnd).padding(12.dp), Color(0xFFB33A4A))
     }
 }
 
 @Composable
-private fun MapMarker(label: String, alignment: Alignment, color: Color) {
+private fun MapMarker(label: String, modifier: Modifier, color: Color) {
     Column(
-        modifier = Modifier.align(alignment).padding(12.dp),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Surface(shape = CircleShape, color = color, shadowElevation = 3.dp) {
