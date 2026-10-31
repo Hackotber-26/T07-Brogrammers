@@ -55,6 +55,8 @@ fun MatchDetailScreen(
             color = if (requestConfirmed) SuccessGreen else MaterialTheme.colorScheme.onBackground,
         )
 
+        DemoMapCard(showRoute = true)
+
         Card(
             shape = RoundedCornerShape(18.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),

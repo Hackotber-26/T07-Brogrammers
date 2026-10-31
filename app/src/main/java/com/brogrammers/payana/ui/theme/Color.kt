@@ -17,6 +17,8 @@ val OnTeal = Color(0xFFFFFFFF)
 val TextPrimary = Color(0xFF1A2B28)
 val TextSecondary = Color(0xFF5A6B67)
 val OutlineMuted = Color(0xFFC5CDC9)
+val MapSurface = Color(0xFFE9F1EF)
+val MapRoad = Color(0xFFB9D7D0)
 
 val ErrorRed = Color(0xFFB3261E)
 val SuccessGreen = Color(0xFF1B7A4E)

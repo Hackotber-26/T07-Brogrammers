@@ -37,6 +37,8 @@ fun ResultsScreen(
 ) {
     Column(Modifier.fillMaxSize()) {
         Column(Modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
+            DemoMapCard(showRoute = true)
+            Spacer(Modifier.height(16.dp))
             Text(
                 "Compatible rides",
                 style = MaterialTheme.typography.headlineSmall,

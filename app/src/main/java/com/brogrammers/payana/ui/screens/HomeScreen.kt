@@ -72,6 +72,8 @@ fun HomeScreen(
     ) {
         BrandHeader()
         Spacer(Modifier.height(20.dp))
+        DemoMapCard()
+        Spacer(Modifier.height(18.dp))
 
         Card(
             shape = RoundedCornerShape(20.dp),
